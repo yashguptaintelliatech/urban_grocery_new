@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+*{
+ background-color: #f9f9f9; 
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("C:\Sandeep Singh Solanki\Urban_Grocery\Urban_Grocery\src\fonts\Roboto\Roboto-Regular.ttf");
+}
+@font-face {
+  font-family: "Roboto";
+  font-weight: 500;
+  src: url("C:\Sandeep Singh Solanki\Urban_Grocery\Urban_Grocery\src\fonts\Roboto\Roboto-Medium.ttf");
+}
+@font-face {
+  font-family: "Roboto";
+  font-weight: 700;
+  src: url("C:\Sandeep Singh Solanki\Urban_Grocery\Urban_Grocery\src\fonts\Roboto\Roboto-Bold.ttf");
+}
+

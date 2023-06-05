@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropdownMenu from "../AccountDropdown/DropdownMenu";
 import { Form, NavLink } from "react-router-dom";
 import {
@@ -10,9 +10,39 @@ import {
   FaWallet,
 } from "react-icons/fa";
 import { AddressForm } from "./AddressForm";
+import axios from "axios";
+import { API_TOKEN } from "../Token/Token";
 
 export const Address = ({ isOpen, setIsOpen }) => {
   const [formOpen, setFormOpen] = useState(false);
+  const [addList, setAddlist] = useState([]);
+
+  const getAddress = () => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`,
+      },
+    };
+  
+    const data = new FormData();
+    data.append("accesskey", "90336");
+    data.append("get_addresses", "1");
+    data.append("user_id", "14");
+  
+    axios
+      .post(
+        "https://grocery.intelliatech.in/api-firebase/user-addresses.php",
+        data,
+        config
+      )
+      .then((res) => setAddlist(res.data.data))
+      .catch((err) => console.log(err));
+  };
+  
+  useEffect(() => {
+    getAddress();
+  }, []);
+
   return (
     <>
       <div className="flex xs:w-20 sm:mr-3 md:w-24 h-[30px] rounded-lg md:px-2 md:mt-[-22px] bg-white">
@@ -32,7 +62,7 @@ export const Address = ({ isOpen, setIsOpen }) => {
                     My Address
                   </span>
                 </a>
-              </NavLink> 
+              </NavLink>
             </li>
             <li className="border border-light_gray mb-2 shadow-lg ">
               <NavLink to={"/myorder"}>
@@ -90,33 +120,50 @@ export const Address = ({ isOpen, setIsOpen }) => {
                 Add New Address
               </button>
             </div>
-            <div className="border border-light_gray w-[800px] px-3 mt-2"> 
-              <div className="flex flex-row mt-6 ">
-                <span className="cursor-pointer">
-                  <FaMapMarked />
-                </span>
-                <button className="ml-6 mt-[-4px]"> Work</button>
-              </div>
-              <div>
-                <div className="flex flex-row gap-48">
-                  <div className="">
-                    <span className="ml-10 gap-2">Name</span>
-                    <span className="ml-4 gap-2">Address</span>
-                    <span className="ml-4 gap-2">City</span>
-                    <span className="ml-4 gap-2">State</span>
-                  </div>
-                  <div>
-                    <button>edit</button>
-                    <button>delete</button>
-                  </div>
-                </div>
-              </div>
+
+            <div>
+              {addList &&
+                addList.map((item) => {
+                  return (
+                    <>
+                      <div className="border border-light_gray w-[800px] px-3 mt-2">
+                        <div className="flex flex-row mt-6 ">
+                          <span className="cursor-pointer">
+                            <div>
+                              <span className="ml-10 gap-2">{item.name}</span>
+                              <span className="ml-4 gap-2">{item.address}</span>
+                              <span className="ml-4 gap-2">{item.city}</span>
+                              <span className="ml-4 gap-2">{item.pincode}</span>
+                            </div>
+
+                            <FaMapMarked />
+                          </span>
+                          <button className="ml-6 mt-[-4px]"> Work</button>
+                        </div>
+                        <div>
+                          <div className="flex flex-row gap-48">
+                            <div className=""></div>
+                            <div>
+                              <button className="ml-2 bg-lime rounded-md shadow px-2">
+                                edit
+                              </button>
+                              <button className="ml-2 bg-lime rounded-md shadow px-2">
+                                delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })}
             </div>
-           
           </div>
         </div>
       </div>
-      <div>{formOpen && <AddressForm />}</div>
+      <div>
+        {formOpen && <AddressForm addList={addList} setAddList={setAddlist} />}
+      </div>
     </>
   );
 };

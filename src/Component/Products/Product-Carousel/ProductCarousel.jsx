@@ -112,7 +112,7 @@ console.log(item.id,"main id")
           discounted_price: item.discounted_price,
           id: item.id,
           image:
-            item.image,
+            data.image,
           images: [
             "http://grocery.intelliatech.in/upload/variant_images/1676618514.4521-883.png",
           ],

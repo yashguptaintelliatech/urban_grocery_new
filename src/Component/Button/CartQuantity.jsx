@@ -27,7 +27,7 @@ function CartQuantity({ item, setAddItem, addItem }) {
   };
 
   const quantityIncrease = () => {
-    alert("helloo");
+    console.log('Increase by 1')
     console.log("addItem>>>>>>>>>>>>>>>>>>>>>>>>>>>>", addItem);
     const config = {
       headers: {

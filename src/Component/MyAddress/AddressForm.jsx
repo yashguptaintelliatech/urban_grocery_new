@@ -2,26 +2,32 @@ import React, { useEffect, useState } from "react";
 import { API_TOKEN } from "../Token/Token";
 import axios from "axios";
 
-export const AddressForm = ({ addList, setAddList }) => {
+export const AddressForm = ({ addList, setAddList, getAddress }) => {
+  
   const [addressData, setAddressData] = useState({
     name: "",
     address: "",
-    // phone: '',
+    type: "",
     city: "",
     pincode: "",
   });
 
   const [cities,setCities] = useState([])
+  const [areas,setAreas] = useState([])
   const [cityDropdown, setCityDropdown] = useState("");
   const [areaDropdown, setAreaDropdown] = useState("");
+  const [initialRender, setIntialrender] = useState(true);
+  // const [pressed, setPressed] = useState(false);
 
   const handleDropdown1Change = (event) => {
     const selectedValue = event.target.value;
     setCityDropdown(selectedValue);
+    console.log(selectedValue)
   };
 
   const handleDropdown2Change = (event) => {
     const selectedValue = event.target.value;
+    console.log(selectedValue)
     setAreaDropdown(selectedValue);
   };
 
@@ -39,67 +45,81 @@ export const AddressForm = ({ addList, setAddList }) => {
     },
   };
   const handleSubmit = (event) => {
+
+
     event.preventDefault();
-    // console.log(addressData);
+    console.log(cityDropdown);
     // setAddList([...addList, addressData]);
 
     const data = new FormData();
     data.append("accesskey", "90336");
     data.append("add_address", "1");
     data.append("user_id", "14");
-    data.append("type", "Home0");
-    data.append("name", "John Smith");
+    data.append("type", `${addressData.type}`);
+    data.append("name", `${addressData.name}`);
     data.append("mobile", "9131582414");
-    data.append("address", "Time Square Empire");
+    data.append("address", `${addressData.address}`);
     data.append("landmark", "Bhuj-Mirzapar Highway");
-    data.append("area_id", "1");
-    data.append("city_id", "2");
-    data.append("pincode", "0123456");
+    data.append("area_id", `${areaDropdown}`);
+    data.append("city_id", `${cityDropdown}`);
+    data.append("pincode", `${addressData.pincode}`);
     data.append("state", "Gujrat");
     data.append("country", "India");
-
-    
-    
     axios
     .post(
       "https://grocery.intelliatech.in/api-firebase/user-addresses.php",
       data,
         config
       )
-      .then((res) => console.log(res.data.data, "hi"))
+      .then((res) => {console.log(res, "hi")
+      getAddress()})
       .catch((err) => console.log(err));
       setAddressData({
         name: "",
         address: "",
-        // phone: '',
+        type: "",
         city: "",
         pincode: "",
       });
+
+      
     };
     
+
+
     useEffect(()=>{
     const cityData = new FormData();
     cityData.append("accesskey", "90336");
     axios.post("https://grocery.intelliatech.in/api-firebase/get-cities.php",
     cityData,
     config)
-    .then((res) => {setCities(res.data.data)
-                    console.log(cities,'hi')})
+    .then((res) => {setCities(res.data.data)})
     .catch((err) => console.log(err));
   },[])
 
 
-  //   useEffect(()=>{
-  //   const areaData = new FormData();
-  //   areaData.append("accesskey", "90336");
-  //   areaData.append('city_id', `${cities.id}`);
-  //   axios.post("https://grocery.intelliatech.in/api-firebase/get-cities.php",
-  //   areaData,
-  //   config)
-  //   .then((res) => {setCities(res.data.data)
-  //                   console.log(cities)})
-  //   .catch((err) => console.log(err));
-  // },[cityDropdown])
+
+    useEffect(()=>{
+      if (initialRender) {
+        console.log('initial')
+        setIntialrender(false)
+      } else {
+        if(!cityDropdown) {
+          console.log('Not initial render, not calling api')
+          return 
+        }
+        console.log('calling areas api')
+        const areaData = new FormData();
+        areaData.append("accesskey", "90336");
+        areaData.append('city_id', `${cityDropdown}`);
+        axios.post("https://grocery.intelliatech.in/api-firebase/get-areas-by-city-id.php",
+        areaData,
+        config)
+        .then((res) => setAreas(res.data.data))
+        .catch((err) => console.log(err));
+      }    
+      }
+      ,[cityDropdown])
 
   return (
     <div className="flex justify-center items-center relative">
@@ -126,14 +146,14 @@ export const AddressForm = ({ addList, setAddList }) => {
                 value={addressData.address}
                 onChange={handleInputChange}
               />
-              <input
+              {/* <input
                 className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
                 type="text"
                 placeholder="City"
                 name="city"
                 value={addressData.city}
                 onChange={handleInputChange}
-              />
+              /> */}
               <input
                 className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
                 placeholder="Pincode*"
@@ -142,6 +162,15 @@ export const AddressForm = ({ addList, setAddList }) => {
                 value={addressData.pincode}
                 onChange={handleInputChange}
               />
+              <input
+                className="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
+                placeholder="type"
+                type="text"
+                name="type"
+                value={addressData.type}
+                onChange={handleInputChange}
+              />
+
             </div>
             <div className="mr-6 flex flex-wrap">
               <div className="my-1">
@@ -152,7 +181,7 @@ export const AddressForm = ({ addList, setAddList }) => {
                   <option value="">City</option>
                   {cities.map((item)=>{
                     return <>
-                      <option value={cities.id}>{item.name}</option>
+                      <option value={item.id}>{item.name}</option>
                     </>
                   })}
                 </select>
@@ -162,9 +191,12 @@ export const AddressForm = ({ addList, setAddList }) => {
                   onChange={handleDropdown2Change}
                   disabled={!cityDropdown}
                 >
-                  <option value="">Select an option</option>
-                  <option value="1">Option 3</option>
-                  <option value="2">Option 4</option>
+                  <option value="">Area</option>
+                  {areas.map((item)=>{
+                    return <>
+                      <option value={item.id}>{item.name}</option>
+                    </>
+                  })}
                 </select>
               </div>
             </div>

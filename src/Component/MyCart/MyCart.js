@@ -116,7 +116,7 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
     };
   });
 
-  const getUserCarts = (accesskey, user_id) => {
+  const getUserCarts = () => {
     let config = {
       headers: {
         Authorization: `Bearer ${API_TOKEN}`,
@@ -132,25 +132,25 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
       "https://grocery.intelliatech.in/api-firebase/cart.php",
       bodyFormdata,
       config
-    );
+    ).then((res) => {
+
+      console.log(res.data.data, "cart my-response");
+      // console.log(res.data.data.map(data=> ({...data ,amount:+data.qty})), "my-response");
+
+     let addqtytoamount= res.data.data.map(data=> ({...data ,amount:+data.qty}))
+     console.log(addqtytoamount, "addqtytoamount");
+      // setAddItem( addqtytoamount);
+      // total();
+      // totalAmount();
+    })
+    .catch((error) => {
+      console.log("hello this error is shown in the program", error);
+    });
   };
   
   useEffect(() => {
-    getUserCarts(accesskey, user_id)
-      .then((res) => {
-
-        console.log(res.data.data, "cart my-response");
-        console.log(res.data.data.map(data=> ({...data ,amount:+data.qty})), "my-response");
-
-       let addqtytoamount= res.data.data.map(data=> ({...data ,amount:+data.qty}))
-       console.log(addqtytoamount, "addqtytoamount");
-        setAddItem( addqtytoamount);
-        total();
-        totalAmount();
-      })
-      .catch((error) => {
-        console.log("hello this error is shown in the program", error);
-      });
+    getUserCarts()
+      
   }, [accesskey, user_id]);
 
   console.log("addItemmmmmmmmmmmmmmmmmmmmmmmm",addItem)
@@ -221,6 +221,8 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
                   {!showForm && addItem.length
                     ? addItem &&
                       addItem.map((item) => {
+                        console.log(item,'this is cart item'
+                          )
                         return (
                           <>
                             <div class="mt-3 bg-white md:p-5 xs:p-4 2xs:p-2  ">

@@ -9,6 +9,8 @@ import {
   FaRegAddressBook,
   FaWallet,
 } from "react-icons/fa";
+import { HiOfficeBuilding } from "react-icons/hi";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { AddressForm } from "./AddressForm";
 import axios from "axios";
 import { API_TOKEN } from "../Token/Token";
@@ -17,18 +19,18 @@ export const Address = ({ isOpen, setIsOpen }) => {
   const [formOpen, setFormOpen] = useState(false);
   const [addList, setAddlist] = useState([]);
 
+  const config = {
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
+  };
+
   const getAddress = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${API_TOKEN}`,
-      },
-    };
-  
     const data = new FormData();
     data.append("accesskey", "90336");
     data.append("get_addresses", "1");
     data.append("user_id", "14");
-  
+
     axios
       .post(
         "https://grocery.intelliatech.in/api-firebase/user-addresses.php",
@@ -38,10 +40,35 @@ export const Address = ({ isOpen, setIsOpen }) => {
       .then((res) => setAddlist(res.data.data))
       .catch((err) => console.log(err));
   };
-  
+
   useEffect(() => {
     getAddress();
   }, []);
+
+  const handleDelete = (id) => {
+    const deleteData = new FormData();
+    deleteData.append("accesskey", "90336");
+    deleteData.append("delete_address", "1");
+    deleteData.append("id", `${id}`);
+
+    axios
+      .post(
+        "https://grocery.intelliatech.in/api-firebase/user-addresses.php",
+        deleteData,
+        config
+      )
+      .then((res) => {
+        console.log("delete response:", res);
+        getAddress();
+      })
+      .catch((err) => console.log(err));
+  };
+
+
+
+  const handleEdit = (id)=>{
+    
+  }
 
   return (
     <>
@@ -126,31 +153,37 @@ export const Address = ({ isOpen, setIsOpen }) => {
                 addList.map((item) => {
                   return (
                     <>
-                      <div className="border border-light_gray w-[800px] px-3 mt-2">
-                        <div className="flex flex-row mt-6 ">
-                          <span className="cursor-pointer">
-                            <div>
-                              <span className="ml-10 gap-2">{item.name}</span>
-                              <span className="ml-4 gap-2">{item.address}</span>
-                              <span className="ml-4 gap-2">{item.city}</span>
-                              <span className="ml-4 gap-2">{item.pincode}</span>
+                      <div className="border border-light_gray w-[800px] px-3 py-3 mt-2">
+                        <div className="flex ">
+                          <div className="w-[5%]">
+                            {item.type === "Home" ?  (
+                              <FaHome className="inline mr-3" />
+                            ): (
+                              <HiOfficeBuilding className="inline mr-3" />
+                            )}
+                          </div>
+                          <div className="w-[85%] flec flex-col">
+                            <div>{item.type === "Home" ? "Home" : "work"}</div>
+                            <div className="pt-[10px]">
+                              <span className="gap-2">{item.name} -</span>
+                              <span className="">{item.address},  </span>
+                              <span className="">{item.area_name},  </span>
+                              <span className="">{item.city_name}, </span>
+                              {/* <span className="">{item.landmark}, </span> */}
+                              <span className="">{item.pincode}, </span>
+                              <span className="">{item.country} </span>
                             </div>
-
-                            <FaMapMarked />
-                          </span>
-                          <button className="ml-6 mt-[-4px]"> Work</button>
-                        </div>
-                        <div>
-                          <div className="flex flex-row gap-48">
-                            <div className=""></div>
-                            <div>
-                              <button className="ml-2 bg-lime rounded-md shadow px-2">
-                                edit
-                              </button>
-                              <button className="ml-2 bg-lime rounded-md shadow px-2">
-                                delete
-                              </button>
-                            </div>
+                          </div>
+                          <div className="w-[10%] flex gap-4 items-center">
+                            <button onClick={() => handleEdit(item.id)} className="text-[21px] font-normal">
+                              <AiOutlineEdit  />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="text-red text-[21px] font-normal"
+                            >
+                              <AiOutlineDelete />
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -162,7 +195,7 @@ export const Address = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
       <div>
-        {formOpen && <AddressForm addList={addList} setAddList={setAddlist} />}
+        {formOpen && <AddressForm addList={addList} setAddList={setAddlist} getAddress={getAddress}/>}
       </div>
     </>
   );

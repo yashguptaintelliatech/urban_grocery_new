@@ -175,7 +175,7 @@ console.log(item.id,"main id")
                       </p>
                     </div>
                     {item &&
-                      item.variants.map((item, data) => {
+                      item.variants.map((data) => {
                         
                         return (
                           <div className="md:flex md:justify-evenly sm:flex xs:flex xs:justify-between xs:mr-4">

@@ -30,7 +30,9 @@ export const ProductCarousel = ({ name, setAddItem, addItem }) => {
         bodyFormdata,
         config
       )
-      .then((res) => {setShowAllProducts(res.data.data)})
+      .then((res) => {
+        setShowAllProducts(res.data.data);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -67,16 +69,15 @@ export const ProductCarousel = ({ name, setAddItem, addItem }) => {
         Authorization: `Bearer ${API_TOKEN}`,
       },
     };
-console.log(data.id,"varaitn id")
-console.log(item.id,"main id")
+    console.log(data.id, "varaitn id");
+    console.log(item.id, "main id");
     const bodyFormData = new FormData();
     bodyFormData.append("accesskey", "90336");
     bodyFormData.append("add_to_cart", "1");
     bodyFormData.append("user_id", "14");
-   
-    bodyFormData.append("product_id", `${item.id}`);
-    bodyFormData.append("product_variant_id", `${data.id}`);
-   
+
+    bodyFormData.append("product_id", `${data.id}`);
+    bodyFormData.append("product_variant_id", `${item.id}`);
 
     // const qtys = (item.qty || 0) + 1;
 
@@ -91,7 +92,7 @@ console.log(item.id,"main id")
         config
       )
       .then((res) => {
-        console.log(res,"res add item");
+        console.log(res, "res add item");
         // setAddItem(res)
         if (addItem.some((cartItem) => cartItem.product_id === item.id)) {
           // console.log("addtiem", addItem);
@@ -107,12 +108,12 @@ console.log(item.id,"main id")
           );
           return;
         }
+        console.log(item.id, "Additem Id in product caraousel");
         let item1 = {
           amount: 1,
           discounted_price: item.discounted_price,
           id: item.id,
-          image:
-            data.image,
+          image: data.image,
           images: [
             "http://grocery.intelliatech.in/upload/variant_images/1676618514.4521-883.png",
           ],
@@ -124,7 +125,7 @@ console.log(item.id,"main id")
           serve_for: "Available",
           slug: "butterscotch-flavorsome-cake",
           stock: "29",
-        
+
           type: "packet",
           unit: "gm",
           user_id: "14",
@@ -173,10 +174,15 @@ console.log(item.id,"main id")
                       <p className="md:text-sm xs:text-sm sm:text-2xl font-normal bg-white truncate ...">
                         {item.name}
                       </p>
+                      <button
+                        className="text-black"
+                        onClick={() => console.log(addItem)}
+                      >
+                        Check
+                      </button>
                     </div>
                     {item &&
                       item.variants.map((data) => {
-                        
                         return (
                           <div className="md:flex md:justify-evenly sm:flex xs:flex xs:justify-between xs:mr-4">
                             <div className=" xs:text-left sm:mt-2 md:mt-[15px] md:mx-4 xs:mx-4 sm:mx-4 md:text-left ">
@@ -194,6 +200,13 @@ console.log(item.id,"main id")
                                 ) ? (
                                   <>
                                     <div className="md:mt-2 md:ml-6 xs:mt-2.5 sm:mt-4 ">
+                                      {console.log(
+                                        item,
+                                        "Item",
+                                        addItem,
+                                        "addItem",
+                                        "In ProductCarousel, calling CartQuantity"
+                                      )}
                                       <CartQuantity
                                         item={item}
                                         setAddItem={setAddItem}
@@ -209,7 +222,7 @@ console.log(item.id,"main id")
                                     Add
                                   </button>
                                 )
-                               ): (
+                              ) : (
                                 <p className=" bg-white text-orange md:text-[11px] text-sm font-medium mt-4 pb-4 sm:mb-4 sm:text-xs  xs:text-xs">
                                   Out of stock
                                 </p>
@@ -227,5 +240,3 @@ console.log(item.id,"main id")
     </div>
   );
 };
-
-

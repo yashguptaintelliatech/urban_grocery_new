@@ -8,6 +8,7 @@ import axios from "axios";
 import { API_TOKEN } from "../Token/Token";
 import { QtyAmount } from "../Button/QtyAmount";
 import CartQuantity from "../Button/CartQuantity";
+import { AddressForm } from "../MyAddress/AddressForm";
 
 function MyCart({ addItem, setAddItem, formData, setFormdata }) {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
   const [showForm, setShowForm] = useState(false);
   const [Payment, setPayment] = useState(false);
   const [totalItem, setTotalItem] = useState(0);
+  // const [addList, setAddlist] = useState([]);
 
   const accesskey = "90336";
   const user_id = "14";
@@ -35,13 +37,14 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
 
   const total = () => {
     let price = 0;
-    addItem.forEach((e) => {
-      if (e.variants && e.variants[0] && e.variants[0].price && e.amount) {
-        price += parseFloat(e.variants[0].price) * e.amount;
+    addItem.forEach((cartItem) => {
+      console.log(addItem)
+      if (cartItem.amount) {
+        price += parseFloat(cartItem.price) * cartItem.amount;
       }
     });
     setPrice(price);
-    console.log(price,"piceeeeeeeeeeeeeeeeeeeeeeeeee")
+    // console.log(price,"piceeeeeeeeeeeeeeeeeeeeeeeeee")
   };
   
   const totalAmount = () => {
@@ -54,6 +57,25 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
     setTotalItem(totalAmount);
   };
   
+  // const getAddress = () => {
+  //   const data = new FormData();
+  //   data.append("accesskey", "90336");
+  //   data.append("get_addresses", "1");
+  //   data.append("user_id", "14");
+
+  //   axios
+  //     .post(
+  //       "https://grocery.intelliatech.in/api-firebase/user-addresses.php",
+  //       data,
+  //       config
+  //     )
+  //     .then((res) => setAddlist(res.data.data))
+  //     .catch((err) => console.log(err));
+  // };
+
+  // useEffect(() => {
+  //   getAddress();
+  // }, []);
 
   useEffect(() => {
     total();
@@ -71,6 +93,8 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
     bodyFormdata.append("accesskey", "90336");
     bodyFormdata.append("remove_from_cart", "1");
     bodyFormdata.append("user_id", "14");
+    bodyFormdata.append("product_variant_id", `${item.product_variant_id
+    }`);
     axios
       .post(
         "https://grocery.intelliatech.in/api-firebase/cart.php",
@@ -78,10 +102,9 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
         config
       )
       .then((res) => {
-        console.log(res, "???????????????????????????????");
         setAddItem((cart) => cart.filter((data) => data.id !== item.id));
-        let price = price - item.amount * parseFloat(item.variants[0].price);
-        setPrice(price);
+        let newPrice = price - item.amount * parseFloat(item.price);
+        setPrice(newPrice);
       })
       .catch((err) => {
         console.log(err);
@@ -134,14 +157,14 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
       config
     ).then((res) => {
 
-      console.log(res.data.data, "cart my-response");
+      // console.log(res.data.data, "cart my-response");
       // console.log(res.data.data.map(data=> ({...data ,amount:+data.qty})), "my-response");
 
      let addqtytoamount= res.data.data.map(data=> ({...data ,amount:+data.qty}))
-     console.log(addqtytoamount, "addqtytoamount");
-      // setAddItem( addqtytoamount);
-      // total();
-      // totalAmount();
+    //  console.log(addqtytoamount, "addqtytoamount");
+      setAddItem( addqtytoamount);
+      total();
+      totalAmount();
     })
     .catch((error) => {
       console.log("hello this error is shown in the program", error);
@@ -153,7 +176,7 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
       
   }, [accesskey, user_id]);
 
-  console.log("addItemmmmmmmmmmmmmmmmmmmmmmmm",addItem)
+  // console.log("addItemmmmmmmmmmmmmmmmmmmmmmmm",addItem)
   return (
     <>
       <button
@@ -221,8 +244,7 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
                   {!showForm && addItem.length
                     ? addItem &&
                       addItem.map((item) => {
-                        console.log(item,'this is cart item'
-                          )
+                        // console.log(item,'this is cart item')
                         return (
                           <>
                             <div class="mt-3 bg-white md:p-5 xs:p-4 2xs:p-2  ">
@@ -275,11 +297,17 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
                                           </div>
 
                                           <div className="bg-white">
+                                            {/* {console.log(item,'Item', addItem,'addItem', 'In mycart, calling QtyAmount')} */}
                                           <QtyAmount
                                               item={item}
                                               setAddItem={setAddItem}
                                               addItem={addItem}
                                             />
+                                          {/* <CartQuantity
+                                              item={item}
+                                              setAddItem={setAddItem}
+                                              addItem={addItem}
+                                            /> */}
                                           </div>
                                           <div className="bg-white">
                                             <FaTrash
@@ -322,7 +350,7 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
                                       Total : ₹ {price}
                                     </p>
                                     <p className="p-2 bg-lime rounded-lg">
-                                      Process to Pay{" "}
+                                      Proceed{" "}
                                     </p>
                                   </button>
                                 )}
@@ -345,6 +373,10 @@ function MyCart({ addItem, setAddItem, formData, setFormdata }) {
                       setFormdata={setFormdata}
                       formData={formData}
                     />
+                    // addList.map((item)=>{
+
+                    // })
+                    // <AddressForm />
                   ) : null}
                 </div>
               </div>

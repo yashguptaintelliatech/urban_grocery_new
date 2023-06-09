@@ -195,7 +195,24 @@ export const Address = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
       <div>
-        {formOpen && <AddressForm addList={addList} setAddList={setAddlist} getAddress={getAddress}/>}
+        {formOpen && 
+        
+        <div className="fixed z-50 top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-75">
+        <div className="bg-white rounded p-8">
+          {/* <h2 className="text-lg font-bold mb-4">Modal Title</h2> */}
+          {/* <p className="mb-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+            tincidunt condimentum lectus, ut commodo metus cursus vitae.
+          </p> */}
+          <AddressForm setFormOpen={setFormOpen} addList={addList} setAddList={setAddlist} getAddress={getAddress}/>
+          {/* <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={closeModal}
+          >
+            Close Modal
+          </button> */}
+        </div>
+      </div>}
       </div>
     </>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { API_TOKEN } from "../Token/Token";
 import axios from "axios";
 
-export const AddressForm = ({ addList, setAddList, getAddress }) => {
+export const AddressForm = ({ addList, setAddList, getAddress, setFormOpen }) => {
   
   const [addressData, setAddressData] = useState({
     name: "",
@@ -124,9 +124,10 @@ export const AddressForm = ({ addList, setAddList, getAddress }) => {
   return (
     <div className="flex justify-center items-center relative">
       <div className="container my-4 px-4 lg:px-20 opacity-70">
-        <div className="w-full p-8 my-4 md:px-12 lg:w-9/12 lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
+        <div className="w-full p-8 my-4 md:px-12  lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
           <div className="flex">
             <h1 className="font-bold uppercase text-3xl">Address : </h1>
+            <button onClick={()=>setFormOpen(false)}>Close Modal</button>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 mt-5">

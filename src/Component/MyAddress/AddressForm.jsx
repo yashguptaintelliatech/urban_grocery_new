@@ -72,7 +72,8 @@ export const AddressForm = ({ addList, setAddList, getAddress, setFormOpen }) =>
         config
       )
       .then((res) => {console.log(res, "hi")
-      getAddress()})
+      getAddress();
+      setFormOpen(false)})
       .catch((err) => console.log(err));
       setAddressData({
         name: "",
@@ -122,6 +123,10 @@ export const AddressForm = ({ addList, setAddList, getAddress, setFormOpen }) =>
       ,[cityDropdown])
 
   return (
+    <div className="fixed z-50 top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-75">
+        <div className="bg-white rounded p-8">
+        
+        
     <div className="flex justify-center items-center relative">
       <div className="container my-4 px-4 lg:px-20 opacity-70">
         <div className="w-full p-8 my-4 md:px-12  lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
@@ -213,5 +218,7 @@ export const AddressForm = ({ addList, setAddList, getAddress, setFormOpen }) =>
         </div>
       </div>
     </div>
+        </div>
+      </div>
   );
 };

@@ -1,1 +1,1 @@
-export const API_TOKEN = '10:23';
+export const API_TOKEN = '10:25';

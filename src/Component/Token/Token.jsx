@@ -1,1 +1,1 @@
-export const API_TOKEN = 'newest commit';
+export const API_TOKEN = 'newer';

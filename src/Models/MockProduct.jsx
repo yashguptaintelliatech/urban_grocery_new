@@ -1,6 +1,6 @@
  export const mockProduct = 
   {
-    error: false,
+    error: true,
     message: "Products Retrived Successfully.",
     total: 37,
     data: [
